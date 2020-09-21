@@ -1,0 +1,274 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    "containerSasToken": { "type": "securestring" },
+    "softcatDynamicsCode": {
+      "type": "string",
+      "maxLength": 6,
+      "metadata": {
+        "description": "Softcat customer dynamics code. Must be a valid 6 character code."
+      }
+      },
+      "resourceGroupLocation": {
+        "type": "string",
+      "defaultValue": "UK South",
+      "allowedValues": [
+        "UK South",
+        "UK West",
+        "West Europe"
+      ],
+      "metadata": {
+        "description": "Location for all resources."
+      }
+      },
+      "vnetAddressPrefix": {
+        "type": "string",
+        "defaultValue": "10.0.0.0/16",
+        "metadata": {
+          "description": "CIDR to be used for the Virtual Network. Must be a valid /24 CIDR"
+        }
+      },
+      "gatewayHostSubnet": {
+        "type": "string",
+        "defaultValue": "10.0.0.0/24",
+        "metadata": {
+          "description": "CIDR to be used for gateway connectivity. Must be a valid /24 CIDR within the virtual network"
+        }
+      },
+      "privateHostSubnet": {
+        "type": "string",
+        "defaultValue": "10.0.1.0/24",
+        "metadata": {
+        "description": "CIDR to be used for private network devices. Must be a valid /24 CIDR within the virtual network"
+      }
+    },
+      "publicHostSubnet": {
+        "type": "string",
+        "defaultValue": "10.0.2.0/24",
+        "metadata": {
+        "description": "CIDR to be used for public network devices. Must be a valid /24 CIDR within the virtual network"
+      }
+   },
+      "bastionHostSubnet": {
+        "type": "string",
+        "defaultValue": "10.0.3.0/27",
+        "metadata": {
+        "description": "CIDR to be used for bastion host. Must be a valid /27 CIDR within the virtual network"
+    }
+  }
+  },
+    "variables":{
+    "TemplateBaseUrl": "https://sctdeploymenttemplates.blob.core.windows.net/aaa/",
+    "ActivityLogTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-ActivityLog-Template.json')]",
+    "NetworkWatcherTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-NetworkWatcher-Template.json')]", 
+    "NetworkTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Network-Template.json')]",
+    "BackupTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Backup-Template.json')]",
+    "AutomationTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Automation-Template.json')]",
+    "ActivityLogResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG01-ActivityLog')]",
+    "NetworkWatcherResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG03-NetworkWatcher')]",
+    "vNetResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG02-vNet')]",
+    "BackupResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG04-Backup')]",
+    "AutomationResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG05-Automation')]",
+    "activityDiagLogName": "SubscriptionActivityLog"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Resources/resourceGroups",
+        "apiVersion": "2020-06-01",
+        "name": "[variables('ActivityLogResourceGroupName')]",
+        "location": "[parameters('resourceGroupLocation')]",
+        "tags": {
+          "SoftcatTemplate": "AzureAAAService"
+        },
+        "properties": {}
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2019-10-01",
+        "name": "AzureActivityLogTemplate",
+        "resourceGroup": "[variables('ActivityLogResourceGroupName')]",
+        "dependsOn": [
+          "[variables('ActivityLogResourceGroupName')]"
+        ],
+        "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('ActivityLogTemplateUrl'), parameters('containerSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"}
+        }
+        }
+      },
+      {
+        "apiVersion": "2017-05-01-preview",
+        "type": "Microsoft.Insights/diagnosticSettings",
+        "name": "[variables('activityDiagLogName')]",
+        "dependsOn": [
+            "AzureActivityLogTemplate"
+        ],
+        "properties": {
+            "workspaceId": "[reference('AzureActivityLogTemplate').outputs.ActivityLogWorkspaceIDOutput.Value]",
+            "mode": "Incremental",
+            "logs": [
+                {
+                    "category": "Administrative",
+                    "enabled": true
+                },
+                {
+                    "category": "Security",
+                    "enabled": true
+                },
+                {
+                    "category": "ServiceHealth",
+                    "enabled": true
+                },
+                {
+                    "category": "Alert",
+                    "enabled": true
+                },
+                {
+                    "category": "Recommendation",
+                    "enabled": true
+                },
+                {
+                    "category": "Policy",
+                    "enabled": true
+                },
+                {
+                    "category": "Autoscale",
+                    "enabled": true
+                },
+                {
+                    "category": "ResourceHealth",
+                    "enabled": true
+                }
+            ]
+            }
+       },
+       {
+        "type": "Microsoft.Resources/resourceGroups",
+        "apiVersion": "2020-06-01",
+        "name": "[variables('NetworkWatcherResourceGroupName')]",
+        "location": "[parameters('resourceGroupLocation')]",
+        "tags": {
+          "SoftcatTemplate": "AzureAAAService"
+        },
+        "properties": {}
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2019-10-01",
+        "name": "AzureNetworkWatcherTemplate",
+        "resourceGroup": "[variables('NetworkWatcherResourceGroupName')]",
+          "dependsOn": [
+            "[variables('NetworkWatcherResourceGroupName')]"
+          ],
+        "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('NetworkWatcherTemplateUrl'), parameters('containerSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"}
+        }
+        }
+      },
+      {
+        "type": "Microsoft.Resources/resourceGroups",
+        "apiVersion": "2020-06-01",
+        "name": "[variables('vNetResourceGroupName')]",
+        "location": "[parameters('resourceGroupLocation')]",
+        "tags": {
+          "SoftcatTemplate": "AzureAAAService"
+        },
+        "properties": {}
+      },
+      {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "AzureNetworkTemplate",
+      "resourceGroup": "[variables('vNetResourceGroupName')]",
+        "dependsOn": [
+          "[variables('vNetResourceGroupName')]",
+          "AzureNetworkWatcherTemplate"
+        ],
+      "properties": {
+      "mode": "Incremental",
+      "templateLink": {
+        "uri": "[concat(variables('NetworkTemplateUrl'), parameters('containerSasToken'))]",
+        "contentVersion": "1.0.0.0"
+      },
+      "parameters": {
+        "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"},
+        "vnetAddressPrefix" :{"value": "[parameters('vnetAddressPrefix')]"},
+        "gatewayHostSubnet" :{"value": "[parameters('gatewayHostSubnet')]"},
+        "privateHostSubnet" :{"value": "[parameters('privateHostSubnet')]"},
+        "publicHostSubnet" :{"value": "[parameters('publicHostSubnet')]"},
+        "bastionHostSubnet" :{"value": "[parameters('bastionHostSubnet')]"}
+      }
+      }
+      },
+      {
+        "type": "Microsoft.Resources/resourceGroups",
+        "apiVersion": "2020-06-01",
+        "name": "[variables('BackupResourceGroupName')]",
+        "location": "[parameters('resourceGroupLocation')]",
+        "tags": {
+          "SoftcatTemplate": "AzureAAAService"
+        },
+        "properties": {}
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2019-10-01",
+        "name": "AzureBackupTemplate",
+        "resourceGroup": "[variables('BackupResourceGroupName')]",
+          "dependsOn": [
+            "[variables('BackupResourceGroupName')]"
+          ],
+        "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BackupTemplateUrl'), parameters('containerSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"}
+        }
+        }
+        },
+        {
+          "type": "Microsoft.Resources/resourceGroups",
+          "apiVersion": "2020-06-01",
+          "name": "[variables('AutomationResourceGroupName')]",
+          "location": "[parameters('resourceGroupLocation')]",
+          "tags": {
+            "SoftcatTemplate": "AzureAAAService"
+          },
+          "properties": {}
+        },
+        {
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2019-10-01",
+          "name": "AzureAutomationTemplate",
+          "resourceGroup": "[variables('AutomationResourceGroupName')]",
+            "dependsOn": [
+              "[variables('AutomationResourceGroupName')]"
+            ],
+          "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[concat(variables('AutomationTemplateUrl'), parameters('containerSasToken'))]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"}
+          }
+          }
+          }
+    ]
+  }
