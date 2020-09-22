@@ -266,7 +266,8 @@
             "contentVersion": "1.0.0.0"
           },
           "parameters": {
-            "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"}
+            "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"},
+            "storageAccountID" :{"value": "[reference('AzureActivityLogTemplate').outputs.ActivityLogStorageIDOutput.Value]"}
           }
           }
           }
