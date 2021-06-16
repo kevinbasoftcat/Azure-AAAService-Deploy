@@ -67,7 +67,6 @@
           "description": "Phone number of the administrator should be notified about Azure Security Center alert"
       }
     }
-  }
   },
     "variables":{
     "TemplateBaseUrl": "https://sctdeploymenttemplates.blob.core.windows.net/aaa/",
