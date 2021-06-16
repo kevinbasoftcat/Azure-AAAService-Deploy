@@ -53,6 +53,7 @@
         "defaultValue": "10.0.3.0/27",
         "metadata": {
         "description": "CIDR to be used for bastion host. Must be a valid /27 CIDR within the virtual network"
+      }
     },
     "AscOwnerEmail": {
       "type": "string",
