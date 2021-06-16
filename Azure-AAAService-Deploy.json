@@ -3,20 +3,18 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
     "containerSasToken": { "type": "securestring" },
-    "softcatDynamicsCode": {
+    "resourceprefix": {
       "type": "string",
-      "maxLength": 6,
+      "maxLength": 3,
       "metadata": {
-        "description": "Softcat customer dynamics code. Must be a valid 6 character code."
+        "description": "Resource prefix. Must be 3 characters."
       }
       },
       "resourceGroupLocation": {
         "type": "string",
       "defaultValue": "UK South",
       "allowedValues": [
-        "UK South",
-        "UK West",
-        "West Europe"
+        "UK South","UK West","West Europe","East US","West US","South Central US","North Europe","East Asia","Japan East","West Europe","Southeast Asia","Japan West","North Central US","Central US","Brazil South","East US 2","Australia Southeast","Australia East"
       ],
       "metadata": {
         "description": "Location for all resources."
@@ -65,11 +63,11 @@
     "NetworkTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Network-Template.json')]",
     "BackupTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Backup-Template.json')]",
     "AutomationTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Automation-Template.json')]",
-    "ActivityLogResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG01-ActivityLog')]",
-    "NetworkWatcherResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG03-NetworkWatcher')]",
-    "vNetResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG02-vNet')]",
-    "BackupResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG04-Backup')]",
-    "AutomationResourceGroupName": "[concat(parameters('softcatDynamicsCode'), '-RG05-Automation')]",
+    "ActivityLogResourceGroupName": "[concat(parameters('resourceprefix'), '-RG01-ActivityLog')]",
+    "NetworkWatcherResourceGroupName": "[concat(parameters('resourceprefix'), '-RG03-NetworkWatcher')]",
+    "vNetResourceGroupName": "[concat(parameters('resourceprefix'), '-RG02-vNet')]",
+    "BackupResourceGroupName": "[concat(parameters('resourceprefix'), '-RG04-Backup')]",
+    "AutomationResourceGroupName": "[concat(parameters('resourceprefix'), '-RG05-Automation')]",
     "activityDiagLogName": "SubscriptionActivityLog"
     },
     "resources": [
@@ -98,7 +96,7 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"}
+          "resourceprefix" :{"value": "[parameters('resourceprefix')]"}
         }
         }
       },
@@ -173,7 +171,7 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"}
+          "resourceprefix" :{"value": "[parameters('resourceprefix')]"}
         }
         }
       },
@@ -203,7 +201,7 @@
         "contentVersion": "1.0.0.0"
       },
       "parameters": {
-        "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"},
+        "resourceprefix" :{"value": "[parameters('resourceprefix')]"},
         "vnetAddressPrefix" :{"value": "[parameters('vnetAddressPrefix')]"},
         "gatewayHostSubnet" :{"value": "[parameters('gatewayHostSubnet')]"},
         "privateHostSubnet" :{"value": "[parameters('privateHostSubnet')]"},
@@ -237,7 +235,7 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"}
+          "resourceprefix" :{"value": "[parameters('resourceprefix')]"}
         }
         }
         },
@@ -266,7 +264,7 @@
             "contentVersion": "1.0.0.0"
           },
           "parameters": {
-            "softcatDynamicsCode" :{"value": "[parameters('softcatDynamicsCode')]"},
+            "resourceprefix" :{"value": "[parameters('resourceprefix')]"},
             "storageAccountID" :{"value": "[reference('AzureActivityLogTemplate').outputs.ActivityLogStorageIDOutput.Value]"}
           }
           }
