@@ -63,6 +63,7 @@
     "NetworkTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Network-Template.json')]",
     "BackupTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Backup-Template.json')]",
     "AutomationTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Automation-Template.json')]",
+    "SecurityCenterTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-SecurityCenter-Template.json')]",
     "ActivityLogResourceGroupName": "[concat(parameters('resourceprefix'), '-RG01-ActivityLog')]",
     "NetworkWatcherResourceGroupName": "[concat(parameters('resourceprefix'), '-RG03-NetworkWatcher')]",
     "vNetResourceGroupName": "[concat(parameters('resourceprefix'), '-RG02-vNet')]",
@@ -268,6 +269,25 @@
             "storageAccountID" :{"value": "[reference('AzureActivityLogTemplate').outputs.ActivityLogStorageIDOutput.Value]"}
           }
           }
+          },
+          {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "SecurityCenterTemplate",
+              "dependsOn": [
+                "AzureActivityLogTemplate"
+              ],
+            "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+              "uri": "[concat(variables('SecurityCenterTemplateUrl'), parameters('containerSasToken'))]",
+              "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+              "resourceprefix" :{"value": "[parameters('resourceprefix')]"},
+              "workspaceid" :{"value": "[reference('AzureActivityLogTemplate').outputs.ActivityLogWorkspaceIDOutput.Value]"}
+            }
+            }
           }
     ]
   }
