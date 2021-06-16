@@ -53,6 +53,18 @@
         "defaultValue": "10.0.3.0/27",
         "metadata": {
         "description": "CIDR to be used for bastion host. Must be a valid /27 CIDR within the virtual network"
+    },
+    "AscOwnerEmail": {
+      "type": "string",
+      "metadata": {
+        "description": "Email of the administrator who should be notified about Azure Security Center alert"
+      }
+    },
+    "AscOwnerContact": {
+      "type": "string",
+      "metadata": {
+          "description": "Phone number of the administrator should be notified about Azure Security Center alert"
+      }
     }
   }
   },
@@ -285,7 +297,9 @@
             },
             "parameters": {
               "resourceprefix" :{"value": "[parameters('resourceprefix')]"},
-              "workspaceid" :{"value": "[reference('AzureActivityLogTemplate').outputs.ActivityLogWorkspaceIDOutput.Value]"}
+              "workspaceid" :{"value": "[reference('AzureActivityLogTemplate').outputs.ActivityLogWorkspaceIDOutput.Value]"},
+              "AscOwnerEmail" :{"value": "[parameters('AscOwnerEmail')]"},
+              "AscOwnerContact" :{"value": "[parameters('AscOwnerContact')]"}
             }
             }
           }
