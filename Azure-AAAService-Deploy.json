@@ -349,7 +349,7 @@
             "properties": {
             "mode": "Incremental",
             "templateLink": {
-              "uri": "[concat(variables('MoniotringTemplateUrl'), parameters('containerSasToken'))]",
+              "uri": "[concat(variables('MonitoringTemplateUrl'), parameters('containerSasToken'))]",
               "contentVersion": "1.0.0.0"
             },
             "parameters": {
