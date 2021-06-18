@@ -66,6 +66,39 @@
       "metadata": {
           "description": "Phone number of the administrator should be notified about Azure Security Center alert"
       }
+    },
+    "ActionGroupEmailName":{
+      "type": "string",
+      "defaultValue": "IT Support Email",
+      "metadata": {
+        "description": "Display name for action group email address"
+      }
+    },
+    "ActionGroupEmail":{
+      "type": "string",
+      "metadata": {
+        "description": "Email address to add to be added to the monitoring action group for alerts"
+      }
+    },
+    "ActionGroupSmsName":{
+      "type": "string",
+      "defaultValue": "IT Support SMS",
+      "metadata": {
+        "description": "Display name for action group SMS"
+      }
+    },
+    "ActionGroupSmsCountryCode":{
+      "type": "string",
+      "defaultValue": "44",
+      "metadata": {
+        "description": "SMS country code for telephone number"
+      }
+    },
+    "ActionGroupSmsNumber":{
+      "type": "string",
+      "metadata": {
+        "description": "Phone number to add to be added to the monitoring action group for alerts"
+      }
     }
   },
     "variables":{
@@ -76,6 +109,7 @@
     "BackupTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Backup-Template.json')]",
     "AutomationTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Automation-Template.json')]",
     "SecurityCenterTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-SecurityCenter-Template.json')]",
+    "MonitoringTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Monitoring-Template.json')]",
     "ActivityLogResourceGroupName": "[concat(parameters('resourceprefix'), '-RG01-ActivityLog')]",
     "NetworkWatcherResourceGroupName": "[concat(parameters('resourceprefix'), '-RG03-NetworkWatcher')]",
     "vNetResourceGroupName": "[concat(parameters('resourceprefix'), '-RG02-vNet')]",
@@ -301,6 +335,30 @@
               "workspaceid" :{"value": "[reference('AzureActivityLogTemplate').outputs.ActivityLogWorkspaceIDOutput.Value]"},
               "AscOwnerEmail" :{"value": "[parameters('AscOwnerEmail')]"},
               "AscOwnerContact" :{"value": "[parameters('AscOwnerContact')]"}
+            }
+            }
+          },
+          {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[parameters('resourceGroupLocation')]",
+            "name": "MonitoringTemplate",
+              "dependsOn": [
+                "AzureActivityLogTemplate"
+              ],
+            "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+              "uri": "[concat(variables('MoniotringTemplateUrl'), parameters('containerSasToken'))]",
+              "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+              "resourceprefix" :{"value": "[parameters('resourceprefix')]"},
+              "ActionGroupEmailName" :{"value": "[parameters('ActionGroupEmailName')]"},
+              "ActionGroupEmail" :{"value": "[parameters('ActionGroupEmail')]"},
+              "ActionGroupSmsName" :{"value": "[parameters('ActionGroupSmsName')]"},
+              "ActionGroupSmsCountryCode" :{"value": "[parameters('ActionGroupSmsCountryCode')]"},
+              "ActionGroupSmsNumber" :{"value": "[parameters('ActionGroupSmsNumber')]"}
             }
             }
           }
