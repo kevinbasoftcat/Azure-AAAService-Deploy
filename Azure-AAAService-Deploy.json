@@ -341,7 +341,6 @@
           {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "location": "[parameters('resourceGroupLocation')]",
             "name": "MonitoringTemplate",
             "resourceGroup": "[variables('ActivityLogResourceGroupName')]",
               "dependsOn": [
