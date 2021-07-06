@@ -110,6 +110,7 @@
     "AutomationTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Automation-Template.json')]",
     "SecurityCenterTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-SecurityCenter-Template.json')]",
     "MonitoringTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Monitoring-Template.json')]",
+    "PolicyTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Policy-Template.json')]",
     "ActivityLogResourceGroupName": "[concat(parameters('resourceprefix'), '-RG01-ActivityLog')]",
     "NetworkWatcherResourceGroupName": "[concat(parameters('resourceprefix'), '-RG03-NetworkWatcher')]",
     "vNetResourceGroupName": "[concat(parameters('resourceprefix'), '-RG02-vNet')]",
@@ -359,6 +360,21 @@
               "ActionGroupSmsName" :{"value": "[parameters('ActionGroupSmsName')]"},
               "ActionGroupSmsCountryCode" :{"value": "[parameters('ActionGroupSmsCountryCode')]"},
               "ActionGroupSmsNumber" :{"value": "[parameters('ActionGroupSmsNumber')]"}
+            }
+            }
+          },
+          {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[parameters('resourceGroupLocation')]",
+            "name": "PolicyTemplate",
+            "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+              "uri": "[concat(variables('PolicyTemplateUrl'), parameters('containerSasToken'))]",
+              "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
             }
             }
           }
