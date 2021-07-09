@@ -99,6 +99,13 @@
       "metadata": {
         "description": "Phone number to add to be added to the monitoring action group for alerts"
       }
+    },
+    "Tags":{
+      "type": "object",
+      "defaultValue": {
+        "CreatedDate": "[utcNow('yyyy-MM-dd')]",
+        "CreatedBy": "AAA Service"
+      }
     }
   },
     "variables":{
@@ -124,9 +131,7 @@
         "apiVersion": "2020-06-01",
         "name": "[variables('ActivityLogResourceGroupName')]",
         "location": "[parameters('resourceGroupLocation')]",
-        "tags": {
-          "SoftcatTemplate": "AzureAAAService"
-        },
+        "tags": "[parameters('Tags')]",
         "properties": {}
       },
       {
@@ -144,7 +149,8 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "resourceprefix" :{"value": "[parameters('resourceprefix')]"}
+          "resourceprefix" :{"value": "[parameters('resourceprefix')]"},
+          "Tags" :{"value": "[parameters('Tags')]"}
         }
         }
       },
@@ -199,9 +205,7 @@
         "apiVersion": "2020-06-01",
         "name": "[variables('NetworkWatcherResourceGroupName')]",
         "location": "[parameters('resourceGroupLocation')]",
-        "tags": {
-          "SoftcatTemplate": "AzureAAAService"
-        },
+        "tags": "[parameters('Tags')]",
         "properties": {}
       },
       {
@@ -219,7 +223,8 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "resourceprefix" :{"value": "[parameters('resourceprefix')]"}
+          "resourceprefix" :{"value": "[parameters('resourceprefix')]"},
+          "Tags" :{"value": "[parameters('Tags')]"}
         }
         }
       },
@@ -228,9 +233,7 @@
         "apiVersion": "2020-06-01",
         "name": "[variables('vNetResourceGroupName')]",
         "location": "[parameters('resourceGroupLocation')]",
-        "tags": {
-          "SoftcatTemplate": "AzureAAAService"
-        },
+        "tags": "[parameters('Tags')]",
         "properties": {}
       },
       {
@@ -254,7 +257,8 @@
         "gatewayHostSubnet" :{"value": "[parameters('gatewayHostSubnet')]"},
         "privateHostSubnet" :{"value": "[parameters('privateHostSubnet')]"},
         "publicHostSubnet" :{"value": "[parameters('publicHostSubnet')]"},
-        "bastionHostSubnet" :{"value": "[parameters('bastionHostSubnet')]"}
+        "bastionHostSubnet" :{"value": "[parameters('bastionHostSubnet')]"},
+        "Tags" :{"value": "[parameters('Tags')]"}
       }
       }
       },
@@ -263,9 +267,7 @@
         "apiVersion": "2020-06-01",
         "name": "[variables('BackupResourceGroupName')]",
         "location": "[parameters('resourceGroupLocation')]",
-        "tags": {
-          "SoftcatTemplate": "AzureAAAService"
-        },
+        "tags": "[parameters('Tags')]",
         "properties": {}
       },
       {
@@ -283,7 +285,8 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "resourceprefix" :{"value": "[parameters('resourceprefix')]"}
+          "resourceprefix" :{"value": "[parameters('resourceprefix')]"},
+          "Tags" :{"value": "[parameters('Tags')]"}
         }
         }
         },
@@ -292,9 +295,7 @@
           "apiVersion": "2020-06-01",
           "name": "[variables('AutomationResourceGroupName')]",
           "location": "[parameters('resourceGroupLocation')]",
-          "tags": {
-            "SoftcatTemplate": "AzureAAAService"
-          },
+          "tags": "[parameters('Tags')]",
           "properties": {}
         },
         {
@@ -313,7 +314,8 @@
           },
           "parameters": {
             "resourceprefix" :{"value": "[parameters('resourceprefix')]"},
-            "storageAccountID" :{"value": "[reference('AzureActivityLogTemplate').outputs.ActivityLogStorageIDOutput.Value]"}
+            "storageAccountID" :{"value": "[reference('AzureActivityLogTemplate').outputs.ActivityLogStorageIDOutput.Value]"},
+            "Tags" :{"value": "[parameters('Tags')]"}
           }
           }
           },
@@ -321,7 +323,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[parameters('resourceGroupLocation')]",
-            "name": "SecurityCenterTemplate",
+            "name": "AzureSecurityCenterTemplate",
               "dependsOn": [
                 "AzureActivityLogTemplate"
               ],
