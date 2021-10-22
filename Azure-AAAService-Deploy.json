@@ -119,7 +119,7 @@
     "MonitoringTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Monitoring-Template.json')]",
     "PoliciesTemplateUrl": "[uri(variables('templateBaseUrl'), 'Azure-Policies-Template.json')]",
     "ActivityLogResourceGroupName": "[concat(parameters('resourceprefix'), '-RG01-ActivityLog')]",
-    "NetworkWatcherResourceGroupName": "[concat(parameters('resourceprefix'), '-RG03-NetworkWatcher')]",
+    "NetworkWatcherResourceGroupName": "[concat(parameters('resourceprefix'), '-RG03-NetworkWatchers')]",
     "vNetResourceGroupName": "[concat(parameters('resourceprefix'), '-RG02-vNet')]",
     "BackupResourceGroupName": "[concat(parameters('resourceprefix'), '-RG04-Backup')]",
     "AutomationResourceGroupName": "[concat(parameters('resourceprefix'), '-RG05-Automation')]",
